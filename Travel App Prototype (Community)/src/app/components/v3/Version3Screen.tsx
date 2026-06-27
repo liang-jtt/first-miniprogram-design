@@ -1,17 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { motion, animate, useAnimationControls } from "motion/react";
+import { motion, animate } from "motion/react";
 
 import svgPaths from "../../../imports/ScreenCResult/svg-178vylhgc4";
 import gallerySvgPaths from "../../../imports/ScreenAGallery/svg-hdvfxiy51l";
 
-import deck1 from "../../../imports/deck-1.png";
-import deck2 from "../../../imports/deck-2.png";
-import deck3 from "../../../imports/deck-3.png";
-import deck4 from "../../../imports/deck-4.png";
-
 import { LISTINGS as CANONICAL_LISTINGS } from "../v2/listings";
 
-const DECK_IMAGES = [deck1, deck2, deck3, deck4];
 const LISTINGS = CANONICAL_LISTINGS;
 
 const AnimCtx = createContext<{ instant: boolean }>({ instant: false });
@@ -27,10 +21,6 @@ function useReducedMotion() {
     return () => mq.removeEventListener?.("change", h);
   }, []);
   return reduced;
-}
-
-function useInstant() {
-  return useContext(AnimCtx).instant;
 }
 
 function Rise({
@@ -118,7 +108,6 @@ function Reveal({
 import heroImg from "../../../imports/ScreenCResult/46af54ed1c12d4f3c69cabe0c3bdc2e01a10bc07.png";
 
 const FONT_STACK = "'Google Sans Flex', 'Google Sans', Inter, sans-serif";
-const MENU_HEIGHT = 78;
 const ACCENT = "#bd8e3c";
 const CITRON = "#ddd864";
 const PIN = "#cfd205";
@@ -127,7 +116,6 @@ const CARD_BG = "#fdfaf6";
 export default function Version3Screen({ noScroll = false }: { noScroll?: boolean } = {}) {
   const reduced = useReducedMotion();
   const instant = noScroll || reduced;
-  const [deckIdx, setDeckIdx] = useState(0);
   const [visibleCount, setVisibleCount] = useState(4);
   return (
     <AnimCtx.Provider value={{ instant }}>
@@ -152,13 +140,11 @@ export default function Version3Screen({ noScroll = false }: { noScroll?: boolea
             overflowX: "hidden",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
-            paddingBottom: MENU_HEIGHT + 24,
+            paddingBottom: 24,
           }}
         >
           <Hero />
           <GalleryView
-            deckIdx={deckIdx}
-            onAdvance={() => setDeckIdx((i) => (i + 1) % DECK_IMAGES.length)}
             visibleCount={visibleCount}
             onShowMore={() => setVisibleCount(11)}
           />
@@ -169,8 +155,6 @@ export default function Version3Screen({ noScroll = false }: { noScroll?: boolea
             <PriceAndReserve />
           </Reveal>
         </div>
-
-        <BottomMenu />
       </div>
     </AnimCtx.Provider>
   );
@@ -185,7 +169,7 @@ function Hero() {
       style={{
         position: "relative",
         width: 402,
-        height: 758,
+        height: 505,
         overflow: "hidden",
         background: "#000",
       }}
@@ -219,8 +203,6 @@ function Hero() {
           pointerEvents: "none",
         }}
       />
-      <StatusBar invert />
-
       <div
         style={{
           position: "absolute",
@@ -270,12 +252,12 @@ function Hero() {
         </div>
       </div>
 
-      {/* Pin + name + stats row — anchored together near bottom of hero (HeroModule frame top:597, left:37, w:331) */}
+      {/* Pin + name + stats row — anchored together near bottom of hero */}
       <div
         style={{
           position: "absolute",
           left: 37,
-          top: 597,
+          bottom: 20,
           width: 331,
           display: "flex",
           flexDirection: "column",
@@ -438,20 +420,10 @@ function TopBar() {
         width: "100%",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         color: "#fff",
       }}
     >
-      <span
-        style={{
-          fontFamily: "'Outfit', sans-serif",
-          fontWeight: 500,
-          fontSize: 14,
-          letterSpacing: "-1.26px",
-        }}
-      >
-        ←
-      </span>
       <div
         style={{
           fontFamily: "'Besley', serif",
@@ -499,67 +471,12 @@ function YMark() {
   );
 }
 
-function StatusBar({ invert = false }: { invert?: boolean }) {
-  const color = invert ? "#fff" : "#000";
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 20,
-        zIndex: 2,
-      }}
-    >
-      <span
-        style={{
-          fontFamily: FONT_STACK,
-          fontSize: 11,
-          color,
-          letterSpacing: 0.05,
-        }}
-      >
-        9:41
-      </span>
-      <div
-        style={{
-          width: 20,
-          height: 12.5,
-          border: `1.25px solid ${color}`,
-          borderRadius: 7.5,
-          boxSizing: "border-box",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            width: 10,
-            height: 5,
-            background: color,
-            borderRadius: 7.5,
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 /* --------------- GALLERY (from V1) --------------- */
 
 function GalleryView({
-  deckIdx,
-  onAdvance,
   visibleCount,
   onShowMore,
 }: {
-  deckIdx: number;
-  onAdvance: () => void;
   visibleCount: number;
   onShowMore: () => void;
 }) {
@@ -569,14 +486,8 @@ function GalleryView({
 
   return (
     <>
-      <Rise delay={0.34} duration={0.35} y={16}>
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 25 }}>
-          <FeaturedDeck deckIdx={deckIdx} onAdvance={onAdvance} />
-        </div>
-      </Rise>
-
-      <Rise delay={0.95} duration={0.35}>
-        <div style={{ padding: "56px 20px 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Rise delay={0.34} duration={0.35}>
+        <div style={{ padding: "30px 20px 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <p style={{ margin: 0, fontFamily: "'Besley', serif", fontSize: 16, color: "#000", lineHeight: 1.2 }}>
             More matches for you
           </p>
@@ -609,201 +520,6 @@ function GalleryView({
         </Rise>
       )}
     </>
-  );
-}
-
-type Slot = "front" | "mid" | "back" | "hidden";
-
-const SLOT_TARGET: Record<
-  Slot,
-  { x: number; y: number; rotate: number; scale: number; zIndex: number; opacity: number }
-> = {
-  front:  { x: 0, y: 43, rotate: 0,    scale: 1,     zIndex: 4, opacity: 1 },
-  mid:    { x: 0, y: 18, rotate: 2.53, scale: 0.98,  zIndex: 3, opacity: 1 },
-  back:   { x: 0, y: 0,  rotate: -3.7, scale: 0.955, zIndex: 2, opacity: 1 },
-  hidden: { x: 0, y: 0,  rotate: -3.7, scale: 0.955, zIndex: 1, opacity: 1 },
-};
-
-const SLOT_ORDER: Slot[] = ["front", "mid", "back", "hidden"];
-const slotForImage = (imgIdx: number, deckIdx: number): Slot =>
-  SLOT_ORDER[(imgIdx - deckIdx + DECK_IMAGES.length) % DECK_IMAGES.length];
-
-function FeaturedDeck({
-  deckIdx,
-  onAdvance,
-}: {
-  deckIdx: number;
-  onAdvance: () => void;
-}) {
-  const instant = useInstant();
-  const animatingRef = useRef(false);
-  const prevDeckRef = useRef(deckIdx);
-  const ctrl0 = useAnimationControls();
-  const ctrl1 = useAnimationControls();
-  const ctrl2 = useAnimationControls();
-  const ctrl3 = useAnimationControls();
-  const controls = [ctrl0, ctrl1, ctrl2, ctrl3];
-  const mountedRef = useRef(false);
-
-  useEffect(() => {
-    if (mountedRef.current) return;
-    mountedRef.current = true;
-    DECK_IMAGES.forEach((_, imgIdx) => {
-      const slot = slotForImage(imgIdx, deckIdx);
-      const target = SLOT_TARGET[slot];
-      if (instant) {
-        controls[imgIdx].set(target);
-        return;
-      }
-      if (slot === "front") {
-        controls[imgIdx].start(target, {
-          type: "spring",
-          stiffness: 280,
-          damping: 22,
-          delay: 0.17,
-        });
-      } else if (slot === "mid") {
-        controls[imgIdx].start(target, { duration: 0.3, ease: "easeOut", delay: 0.13 });
-      } else if (slot === "back") {
-        controls[imgIdx].start(target, { duration: 0.3, ease: "easeOut", delay: 0.1 });
-      } else {
-        controls[imgIdx].set(target);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (deckIdx === prevDeckRef.current) return;
-    const prev = prevDeckRef.current;
-    prevDeckRef.current = deckIdx;
-
-    if (instant) {
-      DECK_IMAGES.forEach((_, imgIdx) => {
-        controls[imgIdx].set(SLOT_TARGET[slotForImage(imgIdx, deckIdx)]);
-      });
-      return;
-    }
-
-    animatingRef.current = true;
-    const tasks: Promise<unknown>[] = [];
-    DECK_IMAGES.forEach((_, imgIdx) => {
-      const oldSlot = slotForImage(imgIdx, prev);
-      const newSlot = slotForImage(imgIdx, deckIdx);
-      if (oldSlot === "front") {
-        tasks.push(
-          (async () => {
-            await controls[imgIdx].start(
-              { x: 72, y: 20, rotate: -8, scale: 0.82, zIndex: 5, opacity: 1 },
-              { duration: 0.22, ease: "easeIn" },
-            );
-            await controls[imgIdx].start(SLOT_TARGET[newSlot], {
-              duration: 0.26,
-              ease: "easeOut",
-            });
-          })(),
-        );
-      } else if (oldSlot === "hidden" && newSlot === "back") {
-        controls[imgIdx].set(SLOT_TARGET[newSlot]);
-      } else {
-        tasks.push(
-          controls[imgIdx].start(SLOT_TARGET[newSlot], {
-            duration: 0.48,
-            ease: [0.4, 0, 0.6, 1],
-          }),
-        );
-      }
-    });
-    Promise.all(tasks).then(() => {
-      animatingRef.current = false;
-    });
-  }, [deckIdx, instant, controls]);
-
-  const handleClick = () => {
-    if (animatingRef.current) return;
-    onAdvance();
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      style={{
-        background: "transparent",
-        border: "none",
-        padding: 0,
-        cursor: "pointer",
-        width: 362,
-        height: 370,
-        position: "relative",
-      }}
-    >
-      {DECK_IMAGES.map((img, imgIdx) => {
-        const slot = slotForImage(imgIdx, deckIdx);
-        const initialTarget = SLOT_TARGET[slot];
-        const initial = instant
-          ? initialTarget
-          : { ...initialTarget, opacity: 0, y: initialTarget.y - 12 };
-        const isFrontInitially = slot === "front" && imgIdx === deckIdx && !mountedRef.current;
-        return (
-          <motion.div
-            key={imgIdx}
-            animate={controls[imgIdx]}
-            initial={initial}
-            style={{
-              position: "absolute",
-              top: 28,
-              left: "50%",
-              marginLeft: -176.45,
-              width: 352.9,
-              height: 313.5,
-              borderRadius: 20.9,
-              overflow: "hidden",
-              background: `url(${img}) center/cover no-repeat`,
-              boxShadow:
-                slot === "front"
-                  ? "0 -2.6px 5.2px rgba(0,0,0,0.25)"
-                  : "0 -1.3px 3.9px rgba(0,0,0,0.1)",
-              willChange: "transform, opacity",
-              display: "flex",
-              alignItems: "flex-start",
-              padding: 15.6,
-              boxSizing: "border-box",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 50%)",
-                pointerEvents: "none",
-              }}
-            />
-            <div
-              style={{
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                opacity: slot === "front" || isFrontInitially ? 1 : 0,
-                transition: "opacity 200ms",
-              }}
-            >
-              <div style={{ display: "flex", gap: 10 }}>
-                <Pill bg="#ddd864">Featured</Pill>
-                <Pill bg="#ddd864">91% Match</Pill>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 4.87 }}>
-                <svg width={8.7} height={8.7} viewBox="0 0 8.27612 7.87106">
-                  <path d={gallerySvgPaths.p157b4000} fill="#fff" />
-                </svg>
-                <span style={{ fontFamily: FONT_STACK, fontSize: 12, color: "#fff" }}>4.96</span>
-              </div>
-            </div>
-          </motion.div>
-        );
-      })}
-    </button>
   );
 }
 
@@ -1167,86 +883,3 @@ function ReserveButton() {
   );
 }
 
-/* --------------- BOTTOM MENU --------------- */
-
-function BottomMenu() {
-  const Item = ({
-    label,
-    icon,
-    active,
-  }: {
-    label: string;
-    icon: React.ReactNode;
-    active?: boolean;
-  }) => (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, width: 75 }}>
-      {icon}
-      <span
-        style={{
-          fontFamily: FONT_STACK,
-          fontWeight: 300,
-          fontSize: 12,
-          color: active ? "#000" : "rgba(0,0,0,0.15)",
-          lineHeight: 1.2,
-        }}
-      >
-        {label}
-      </span>
-    </div>
-  );
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: CARD_BG,
-        borderRadius: "20px 20px 0 0",
-        boxShadow: "0 0 30px rgba(0,0,0,0.11)",
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "17px 34px",
-      }}
-    >
-      <Item
-        active
-        label="Explore"
-        icon={
-          <svg width={12.7} height={12.7} viewBox="0 0 12.6934 12.6934">
-            <path d={svgPaths.p3d6f9a00} fill="#000" />
-            <path d={svgPaths.p23379e60} fill="#000" />
-            <path d={svgPaths.pd398f00} fill="#000" />
-          </svg>
-        }
-      />
-      <Item
-        label="Saved"
-        icon={
-          <svg width={12.7} height={12.7} viewBox="0 0 12.6934 12.6934">
-            <path d={svgPaths.p3d8cec80} fill="#000" fillOpacity={0.15} />
-          </svg>
-        }
-      />
-      <Item
-        label="Trips"
-        icon={
-          <svg width={12.7} height={12.7} viewBox="0 0 12.6934 12.6934">
-            <path d={svgPaths.p26832580} fill="#000" fillOpacity={0.15} />
-            <path d={svgPaths.p14358580} fill="#000" fillOpacity={0.15} />
-          </svg>
-        }
-      />
-      <Item
-        label="Profile"
-        icon={
-          <svg width={12.7} height={12.7} viewBox="0 0 12.6934 12.6934">
-            <path d={svgPaths.p1bfc73c0} fill="#000" fillOpacity={0.15} />
-            <path d={svgPaths.p2a2d7c00} fill="#000" fillOpacity={0.15} />
-          </svg>
-        }
-      />
-    </div>
-  );
-}
