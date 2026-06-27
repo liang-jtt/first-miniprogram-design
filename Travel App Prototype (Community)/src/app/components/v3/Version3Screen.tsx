@@ -588,7 +588,7 @@ function ListingCard({ listing }: { listing: (typeof LISTINGS)[number] }) {
         style={{
           position: "absolute",
           left: 12,
-          right: 12,
+          width: 127,
           bottom: 12,
           background: "#fdfaf6",
           padding: 6.77,
@@ -609,7 +609,7 @@ function ListingCard({ listing }: { listing: (typeof LISTINGS)[number] }) {
         >
           {listing.name}
         </p>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <IconLabel iconPath={gallerySvgPaths.p218635f0} iconW={7.6} iconH={8.2} viewBox="0 0 7.2 8.2" label={listing.type} />
           <GuestIconLabel count={listing.guests} />
           <IconLabel iconPath={gallerySvgPaths.p1cd2000} iconW={9} iconH={9} viewBox="0 0 9.03 9.03" label={listing.price} />
