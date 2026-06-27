@@ -500,8 +500,8 @@ function GalleryView({
       <div
         style={{
           padding: "18px 20px 0",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: "flex",
+          flexDirection: "column",
           gap: 20,
         }}
       >
@@ -544,11 +544,8 @@ function Pill({ children, bg }: { children: React.ReactNode; bg: string }) {
 }
 
 function ListingCard({ listing }: { listing: (typeof LISTINGS)[number] }) {
-  const [hover, setHover] = useState(false);
   return (
     <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       style={{
         height: 160,
         borderRadius: 8,
@@ -599,10 +596,6 @@ function ListingCard({ listing }: { listing: (typeof LISTINGS)[number] }) {
           display: "flex",
           flexDirection: "column",
           gap: 8,
-          transform: hover ? "translateY(0)" : "translateY(calc(100% + 12px))",
-          opacity: hover ? 1 : 0,
-          transition: "transform 220ms ease-out, opacity 180ms ease-out",
-          pointerEvents: hover ? "auto" : "none",
         }}
       >
         <p
